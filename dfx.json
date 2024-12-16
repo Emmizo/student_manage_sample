@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "student-management-backend": {
+      "main": "src/student-management-backend/main.mo",
+      "type": "motoko"
+    },
+    "student-management-frontend": {
+      "dependencies": [
+        "student-management-backend"
+      ],
+      "source": [
+        "src/student-management-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "student-management-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
