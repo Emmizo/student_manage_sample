@@ -1,4 +1,5 @@
 import Array "mo:base/Array";
+import List "mo:base/List";
 
 actor StudentManagement {
   //Types for students, Courses and Attendance
@@ -84,7 +85,38 @@ actor StudentManagement {
     return true;
   };
 
-  public func getAttendance(studentId : Nat, courseId : Nat) : async [Attendance] {
-    return Array.filter<Attendance>(attendanceRecords, func(a) { a.studentId == studentId and a.courseId == courseId });
+  public func getAttendance(studentId : Nat, courseId : Nat) : async [{
+    studentName : Text;
+    courseName : Text;
+    date : Text;
+    status : Bool;
+  }] {
+    // Filter attendance records for the given studentId and courseId
+    let filteredAttendance = Array.filter<Attendance>(
+      attendanceRecords,
+      func(a) { a.studentId == studentId and a.courseId == courseId },
+    );
+
+    // Map attendance records to include studentName and courseName
+    return Array.map<Attendance, { studentName : Text; courseName : Text; date : Text; status : Bool }>(
+      filteredAttendance,
+      func(a) {
+        let studentName = switch (Array.find<Student>(students, func(s) { s.id == a.studentId })) {
+          case (?student) { student.name }; // Found student
+          case (_) { "Unknown Student" }; // Not found
+        };
+        let courseName = switch (Array.find<Course>(courses, func(c) { c.id == a.courseId })) {
+          case (?course) { course.name }; // Found course
+          case (_) { "Unknown Course" }; // Not found
+        };
+
+        {
+          studentName = studentName;
+          courseName = courseName;
+          date = a.date;
+          status = a.status;
+        };
+      },
+    );
   };
 };
